@@ -1,0 +1,11 @@
+Perinet is an industrial IoT company based in Cottbus. Its AI platform connects
+LLM workflows to real-time MQTT sensor streams. The platform exposes FastAPI REST
+APIs and is deployed with Docker and Kubernetes.
+
+PeriChat is a chatbot that runs on the Perinet platform. MessageSense performs
+real-time anomaly detection over the MQTT message stream. Both PeriChat and
+MessageSense are containerized and benchmarked before release.
+
+LangGraph orchestrates the multi-agent workflows. RAGAs and MLflow are used to
+evaluate retrieval quality. The MQTT broker feeds sensor data into MessageSense,
+which raises alerts when anomalies are detected.
