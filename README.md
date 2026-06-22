@@ -77,14 +77,36 @@ src/graphrag_agent/
   cli.py        # build / ask commands
 ```
 
+## LLM providers
+
+The agent is provider-pluggable via `GRAPHRAG_LLM` (default `auto`):
+
+| `GRAPHRAG_LLM` | Backend |
+|---|---|
+| `api` | any OpenAI-compatible HTTP endpoint (`OPENAI_API_KEY`) |
+| `codex` | Codex CLI (`codex exec`) — runs off your subscription, no API key |
+| `claude` | Claude Code CLI (`claude -p`) |
+| `gemini` | Gemini CLI (`gemini -p`) |
+| `off` | no LLM — heuristic extractor (demo/CI) |
+
+`auto` picks the first available: API key → codex → claude → gemini → off. So you
+can run rich extraction from a local CLI subscription without any API key:
+
+```bash
+GRAPHRAG_LLM=codex python -m graphrag_agent.cli build docs/notes.md
+GRAPHRAG_LLM=codex python -m graphrag_agent.cli ask "How is X connected to Y?"
+```
+
 ## Configuration
 
 | Env var | Default | Purpose |
 |---|---|---|
-| `OPENAI_API_KEY` | – | enables LLM extraction/answers (omit to run offline) |
+| `GRAPHRAG_LLM` | `auto` | provider selection (see above) |
+| `OPENAI_API_KEY` | – | enables the `api` provider |
 | `OPENAI_BASE_URL` | OpenAI | any OpenAI-compatible endpoint |
-| `GRAPHRAG_MODEL` | `gpt-4o-mini` | model id |
+| `GRAPHRAG_MODEL` | `gpt-4o-mini` | model id (for `api`) |
 | `GRAPHRAG_HOPS` | `2` | k-hop expansion radius at query time |
+| `GRAPHRAG_CHUNK_SIZE` | `900` | chunk size in characters |
 
 ## Tests
 
