@@ -25,9 +25,15 @@ class GraphRAGAgent:
         self.kg = kg or KnowledgeGraph()
 
     # ---- build ----
-    def build(self, paths: list[str | Path]) -> KnowledgeGraph:
+    def build(self, paths: list[str | Path], root: str | Path | None = None) -> KnowledgeGraph:
+        """Ingest files into the graph.
+
+        `root` makes each chunk's `source` a repo-relative path instead of a bare
+        filename. Pass it whenever `source` is used as a document identity: a tree
+        with several `README.md` files otherwise merges them into one.
+        """
         for p in paths:
-            chunks = load_chunks(p, self.cfg.chunk_size, self.cfg.chunk_overlap)
+            chunks = load_chunks(p, self.cfg.chunk_size, self.cfg.chunk_overlap, root=root)
             self._ingest(chunks)
         return self.kg
 
