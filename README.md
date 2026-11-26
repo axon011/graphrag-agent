@@ -108,6 +108,17 @@ GRAPHRAG_LLM=codex python -m graphrag_agent.cli ask "How is X connected to Y?"
 | `GRAPHRAG_HOPS` | `2` | k-hop expansion radius at query time |
 | `GRAPHRAG_CHUNK_SIZE` | `900` | chunk size in characters |
 
+## Limitations
+
+- **The multi-hop advantage is unmeasured.** No eval in this repo compares it with plain vector RAG. Answering questions that flat retrieval misses is the design goal, not a measured result.
+- **Entity linking is string matching.** `KnowledgeGraph.find` looks for entity names as substrings of the question, then falls back to word overlap. Paraphrases and synonyms miss. Short names match inside longer words, so an entity called "Go" matches "good".
+- **Entities merge by exact name only.** Ids are slugs of the name, so "OpenAI" and "OpenAI Inc." become two nodes. There is no alias resolution.
+- **Bad LLM output falls back silently.** If the LLM call or its JSON fails for a chunk, that chunk goes through the heuristic extractor without a warning: capitalised phrases linked by `co_occurs_with`. One graph can mix both kinds of edge.
+- **Some LLM relations are dropped.** A relation whose source or target isn't in the same chunk's entity list is discarded.
+- **Expansion isn't ranked.** The k-hop step walks the graph as undirected. Two hops from a well-connected entity can pull in most of the graph. Evidence passages are cut at 6 in the order they were found, not by relevance.
+- **Small corpora only.** The graph is an in-memory `networkx` object saved as JSON, and every query scans all edges to build its triples.
+- **Offline mode is a demo.** Without an LLM, the heuristic extractor gives a graph you can run end to end. It isn't useful extraction.
+
 ## Tests
 
 ```bash

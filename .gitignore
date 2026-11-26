@@ -10,3 +10,9 @@ venv/
 .pytest_cache/
 kg.json
 .DS_Store
+
+# local agent notes and private docs
+CLAUDE.md
+AGENTS.md
+.agent.md
+docs/career/
